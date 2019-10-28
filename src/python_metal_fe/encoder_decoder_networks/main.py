@@ -1,6 +1,6 @@
 from keras.models import Model
 from keras.layers import Input, Conv2D,MaxPooling2D, UpSampling2D, concatenate, Dropout,add, Dense
-from utils import fake_tune_generator, historyPlot, dice_coef_loss, auc, mean_iou, dice_coef
+from python_metal_fe.src.python_metal_fe.utils import fake_tune_generator, historyPlot, dice_coef_loss, auc, mean_iou, dice_coef
 import os
 from tqdm import tqdm
 import numpy as np
@@ -9,32 +9,28 @@ import random
 import copy
 
 class EncoderDecoderNetwork():
-    def __init__(self, name, id):
+    def __init__(self, name, id = 0, weights_path = '/tuned_models'):
         self.name = name
         self.id = id
         self.callbacks = []
+        self.weights_path = weights_path
+        if not os.path.exists(self.weights_path):
+            os.makedirs(self.weights_path)
 
     def load_weights(self):
-        self.weights_file = "/home/tjvsonsbeek/featureExtractorUnet/models_fake_tune/final_model_{}_{}.h5".format(self.task, self.name)
+        self.weights_file = os.path.join(self.weights,"model_{}_{}.h5".format(self.task, self.name))
         self.model.load_weights(self.weights_file)
 
 
     def update_encoder_weights(self):
         if self.name == 'VGG16':
-            self.feature_extractor = Model(input = self.model.input, output = self.model.layers[18].output)
+            self.feature_extractor = Model(inputs = self.model.input, outputs = self.model.layers[18].output)
         elif self.name == 'ResNet50':
-            self.feature_extractor = Model(input = self.model.input, output = self.model.layers[172].output)
+            self.feature_extractor = Model(inputs = self.model.input, outputs = self.model.layers[172].output)
         elif self.name == 'MobileNetV1':
-            self.feature_extractor = Model(input = self.model.input, output = self.model.layers[81].output)
+            self.feature_extractor = Model(inputs = self.model.input, outputs = self.model.layers[81].output)
         else:
-            raise ValueError("No weights to update!!")
-
-
-    def get_meta_data(self, addresses):
-        # self.model_ft_meta = self.model
-        self.model.fit_generator(generator(addresses, 1, self.imageDimensions), steps_per_epoch= self.minibatch_size, nb_epoch = 10, verbose = 0)
-        subset_features = self.model.evaluate_generator(generator(addresses, 1, self.imageDimensions), steps= self.minibatch_size)
-        return subset_features
+            raise AssertionError("No weights to update!!")
 
     def add_callback(self, callback):
         self.callbacks.append(callback)
@@ -42,7 +38,7 @@ class EncoderDecoderNetwork():
         self.history = self.model.fit_generator(fake_tune_generator(train_data, self.minibatch_size, imageDimensions), steps_per_epoch = 200, nb_epoch = self.epochs, validation_data = fake_tune_generator(val_data, self.minibatch_size, imageDimensions), validation_steps = 50, verbose = verbosity)
     def save_model(self):
         print("---SAVING MODEL---")
-        self.model.save_weights("models_fake_tune/final_model_{}_{}.h5".format(self.task, self.name))
+        self.model.save_weights(os.path.join(self.weights,"model_{}_{}.h5".format(self.task, self.name)))
     def build_encoder(self):
         if self.name == 'VGG16':
             from keras.applications.vgg16 import VGG16
@@ -56,15 +52,14 @@ class EncoderDecoderNetwork():
         elif self.name == 'MobileNetV1':
             from keras.applications.mobilenet import MobileNet
             self.feature_extractor = MobileNet(input_shape = (224,224,3), weights='imagenet', include_top=False)
-            for layer in range(len(self.feature_extractor.layers)):
-                print("{}_{}_{}".format(layer, self.feature_extractor.layers[layer], self.feature_extractor.layers[layer].output.shape))
         elif self.name == 'MobileNetV2':
             from keras.applications.mobilenet_v2 import MobileNetV2
             self.feature_extractor = MobileNetV2(weights='imagenet', include_top=False)
         else:
-            raise ValueError("FAILURE!! No Encoder loaded")
+            raise AssertionError("FAILURE!! No Encoder found")
 
     def build_classifier(self):
+
         if self.name == 'VGG16':
             from keras.applications.vgg16 import VGG16
             self.classifier = VGG16(weights='imagenet', include_top=False)
@@ -77,18 +72,17 @@ class EncoderDecoderNetwork():
         elif self.name == 'MobileNetV1':
             from keras.applications.mobilenet import MobileNet
             self.classifier = MobileNet(input_shape = (224,224,3), weights='imagenet', include_top=False)
-        elif self.name == 'MobileNetV2':
-            from keras.applications.mobilenet_v2 import MobileNetV2
-            self.classifier = MobileNetV2(weights='imagenet', include_top=False)
         else:
-            raise ValueError("FAILURE!! No Encoder loaded")
+            raise AssertionError("FAILURE!! No classifier found")
         # build top:
-        dense1 = Dense(4096, activation = 'relu')(self.classifier.layers[-1].ouput)
+        dense1 = Dense(4096, activation = 'relu')(self.classifier.layers[-1].output)
         dense2 = Dense(1000, activation = 'relu')(dense1)
-        dense3 = Dense(9, activation = 'softmax)(dense2')
-        self.classifier = Model(input = self.classifier.layers[0].output, output = dense3)
+        dense3 = Dense(9, activation = 'softmax')(dense2)
+        self.classifier = Model(inputs = self.classifier.layers[0].output, outputs = dense3)
 
     def build_decoder(self):
+        if not hasattr(self, 'feature_extractor'):
+            raise AttributeError('No feature extractor loaded yet')
         if self.name == 'VGG16':
             self.build_decoder_VGG16()
         elif self.name == 'VGG19':
@@ -98,7 +92,7 @@ class EncoderDecoderNetwork():
         elif self.name == 'MobileNetV1':
             self.build_decoder_MobileNetV1()
         else:
-            raise ValueError("FAILURE!! No Decoder loaded")
+            raise AssertionError("FAILURE!! No Decoder found")
     def build_decoder_VGG16(self):
         conv5 = Conv2D(512, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(self.feature_extractor.layers[18].output)
         up6 = Conv2D(512, 2, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(UpSampling2D(size = (2,2))(conv5))
@@ -125,7 +119,7 @@ class EncoderDecoderNetwork():
         merge10 = concatenate([self.feature_extractor.layers[2].output,up10], axis = 3)
         conv10 = Conv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(merge10)
         conv10 = Conv2D(1, 1, activation = 'sigmoid')(conv10)
-        self.model =  Model(input = self.feature_extractor.layers[0].output, output = conv10)
+        self.model =  Model(inputs = self.feature_extractor.layers[0].output, outputs = conv10)
     def build_decoder_VGG19(self):
         conv5 = Conv2D(512, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(self.feature_extractor.layers[21].output)
         up6 = Conv2D(512, 2, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(UpSampling2D(size = (2,2))(conv5))
@@ -152,9 +146,8 @@ class EncoderDecoderNetwork():
         merge10 = concatenate([self.feature_extractor.layers[2].output,up10], axis = 3)
         conv10 = Conv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(merge10)
         conv10 = Conv2D(1, 1, activation = 'sigmoid')(conv10)
-        self.model =  Model(input = self.feature_extractor.layers[0].output, output = conv10)
+        self.model =  Model(inputs = self.feature_extractor.layers[0].output, outputs = conv10)
     def build_decoder_RESNET50(self):
-        print(self.feature_extractor.summary())
         conv5 = Conv2D(2048, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(self.feature_extractor.layers[172].output)
         up6 = Conv2D(2048, 2, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(UpSampling2D(size = (2,2))(conv5))
         merge6 = concatenate([self.feature_extractor.layers[140].output,up6], axis = 3)
@@ -180,7 +173,7 @@ class EncoderDecoderNetwork():
         merge10 = concatenate([self.feature_extractor.layers[0].output,up10], axis = 3)
         conv10 = Conv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(merge10)
         conv10 = Conv2D(1, 1, activation = 'sigmoid')(conv10)
-        self.model = Model(input = self.feature_extractor.layers[0].output, output = conv10)
+        self.model = Model(inputs = self.feature_extractor.layers[0].output, outputs = conv10)
 
     def build_decoder_MobileNetV1(self):
         up6 = Conv2D(1024, 2, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(UpSampling2D(size = (2,2))(self.feature_extractor.layers[81].output))
@@ -207,4 +200,4 @@ class EncoderDecoderNetwork():
         merge10 = concatenate([self.feature_extractor.layers[0].output,up10], axis = 3)
         conv10 = Conv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(merge10)
         conv10 = Conv2D(1, 1, activation = 'sigmoid')(conv10)
-        self.model = Model(input = self.feature_extractor.layers[0].output, output = conv10)
+        self.model = Model(inputs = self.feature_extractor.layers[0].output, outputs = conv10)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from python_metal_fe.utils import fib
+from python_metal_fe.utils import normalize
 
 __author__ = "tjvsonsbeek"
 __copyright__ = "tjvsonsbeek"

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from python_metal_fe.meta_get_features import run
+from python_metal_fe.skeleton import fib
 
 __author__ = "tjvsonsbeek"
 __copyright__ = "tjvsonsbeek"
