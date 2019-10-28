@@ -1,7 +1,6 @@
 from keras.optimizers import Adam
 from utils import dice_coef_loss, auc, mean_iou
 from keras.callbacks import ModelCheckpoint, EarlyStopping
-from data import Data
 import nibabel as nib
 from scipy import misc
 import cv2
