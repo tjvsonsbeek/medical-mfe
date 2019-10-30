@@ -1,6 +1,6 @@
 from keras.models import Model
 from keras.layers import Input, Conv2D,MaxPooling2D, UpSampling2D, concatenate, Dropout,add, Dense
-from python_metal_fe.src.python_metal_fe.utils import model_tune_generator, historyPlot, dice_coef_loss, auc, mean_iou, dice_coef
+from utils import model_tune_generator, historyPlot, dice_coef_loss, auc, mean_iou, dice_coef
 import os
 from tqdm import tqdm
 import numpy as np
