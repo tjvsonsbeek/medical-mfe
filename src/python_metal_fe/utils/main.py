@@ -174,7 +174,7 @@ def subset_index_to_address(subset_indices, train_addresses):
         addresses.append(train_addresses[i])
     return addresses
 
-def fake_tune_generator(addresses, minibatch_size, imageDimensions):
+def model_tune_generator(addresses, minibatch_size, imageDimensions):
      f = 1
      # Create empty arrays to contain batch of features and labels#
      batch_features = np.zeros((minibatch_size, imageDimensions[0],imageDimensions[1],3))
@@ -190,8 +190,8 @@ def fake_tune_generator(addresses, minibatch_size, imageDimensions):
                 j+=1
             im = (im-np.mean(im))/np.std(im)
             label = np.zeros_like(im)
+            # top ten percent of images becomes mask
             label[im>np.percentile(im,90)] = 1
-            # print(im.shape)
             batch_features[i,:,:,:] = im
             batch_labels[i,:,:,0] = (np.average(label, axis = -1)>0).astype(np.uint8)
 

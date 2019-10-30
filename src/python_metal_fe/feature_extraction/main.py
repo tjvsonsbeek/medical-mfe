@@ -10,11 +10,15 @@ from keras.applications.vgg19 import preprocess_input
 
 class MetaFeatureExtraction():
 
-    def __init__(self, task, subset_size, fe = '', model = None, nr_of_filters = None):
+    def __init__(self, task, subset_size, task_path = 'decathlonData',output_path = 'output' fe = '', model = None, nr_of_filters = None):
         # self.id = id
         self.task = task
         self.subset_size = subset_size
         self.fe = fe
+        self.dataset_path = task_path
+        self.output_path = output_path
+        if not os.path.exists(os.join(self.output_path,' metadata')):
+            os.makedirs(os.join(self.output_path, 'metadata'))
         if model:
             self.load_model(model.feature_extractor)
         if nr_of_filters:
@@ -38,9 +42,9 @@ class MetaFeatureExtraction():
             self.meta_features = np.reshape(self.meta_features, (self.meta_features.shape[0],self.meta_features.shape[1]*self.meta_features.shape[2],self.meta_features.shape[3]))
 
     def gather_random_addresses(self):
-        self.addresses = random.sample(os.listdir(r'/home/tjvsonsbeek/decathlonData/{}/imagesTs'.format(self.task)), self.subset_size)
+        self.addresses = random.sample(os.listdir(os.path.join(self.dataset_path,'{}/imagesTs'.format(self.task))), self.subset_size)
         for i in range(self.subset_size):
-            self.addresses[i] = os.path.join(r'/home/tjvsonsbeek/decathlonData/{}/imagesTs'.format(self.task), self.addresses[i])
+            self.addresses[i] = os.path.join(self.dataset_path,'{}/imagesTs'.format(self.task), self.addresses[i])
 
     # def gather_address(self, nr):
     #     self.addresses = [os.listdir(r'/home/tjvsonsbeek/decathlonData/{}/imagesTs'.format(self.task))[nr]]
@@ -53,9 +57,9 @@ class MetaFeatureExtraction():
             return self.addresses[index][-10:-7]
 
     def gather_all_addresses(self):
-        self.addresses = os.listdir('/home/tjvsonsbeek/decathlonData/{}/imagesTs'.format(self.task))
+        self.addresses = os.listdir(os.path.join(self.dataset_path,'{}/imagesTs'.format(self.task)))
         for i in range(len(self.addresses)):
-            self.addresses[i] = os.path.join('/home/tjvsonsbeek/decathlonData/{}/imagesTs'.format(self.task), self.addresses[i])
+            self.addresses[i] = os.path.join(self.dataset_path,'{}/imagesTs'.format(self.task), self.addresses[i])
 
     def gather_mean_meta_labels(self):
         self.meta_labels = np.array(np.zeros(19))
@@ -65,7 +69,7 @@ class MetaFeatureExtraction():
                 nr = nr[1:]
             elif nr[1] == '_':
                 nr = nr[2:]
-            label = np.load('/home/tjvsonsbeek/featureExtractorUnet/metadata/{}/{}.npy'.format(self.task, nr))
+            label = np.load('metadata/{}/{}.npy'.format(self.task, nr))
             for lab in range(len(label)):
                 self.meta_labels[lab] += label[lab]/len(self.addresses)
 
@@ -77,40 +81,39 @@ class MetaFeatureExtraction():
                 nr = nr[1:]
             elif nr[1] == '_':
                 nr = nr[2:]
-            label = np.load(r'/home/tjvsonsbeek/featureExtractorUnet/metadata/{}/{}.npy'.format(self.task, nr))
+            label = np.load('metadata/{}/{}.npy'.format(self.task, nr))
             for lab in range(len(label)):
                 self.meta_labels[i, lab] = label[lab]
 
     def save_meta_features(self):
-        np.save('metadata/meta_regressor_features_{}_{}.npy'.format(self.task, self.type), self.meta_features)
+        np.save(os.path.join(self.output_path,'metadata/meta_regressor_features_{}_{}.npy'.format(self.task, self.type)), self.meta_features)
 
     def save_meta_labels(self):
-        np.save('metadata/meta_regressor_labels_{}_{}.npy'.format(self.task, self.type), self.meta_labels)
+        np.save(os.path.join(self.output_path,'metadata/meta_regressor_labels_{}_{}.npy'.format(self.task, self.type)), self.meta_labels)
 
     def load_meta_features(self):
             if self.fe == 'STAT':
                 if self.task == 'Task11_CHAOSLiver' or self.task == 'Task12_LITSLiver' or self.task == 'Task13_ACDCHeart':
-                    self.meta_features = np.load('metadata/statistical/meta_regressor_features_{}_{}.npy'.format(self.task, self.fe))
+                    self.meta_features = np.load(os.path.join(self.output_path,'metadata/meta_regressor_features_{}_{}.npy'.format(self.task, self.fe)))
                 else:
-                    self.meta_features = np.load('metadata/statistical/meta_regressor_features_{}_{}_{}.npy'.format(self.subset_size, self.task, self.fe))
+                    self.meta_features = np.load(os.path.join(self.output_path, 'metadata/meta_regressor_features_{}_{}_{}.npy'.format(self.subset_size, self.task, self.fe)))
             else:
                 if self.task == 'Task11_CHAOSLiver' or self.task == 'Task12_LITSLiver' or self.task == 'Task13_ACDCHeart':
-                    self.meta_features = np.load('metadata/deeplearning/meta_regressor_features_{}_{}.npy'.format(self.task, self.fe))
+                    self.meta_features = np.load(os.path.join(self.output_path, 'metadata/meta_regressor_features_{}_{}.npy'.format(self.task, self.fe)))
                 else:
-                    self.meta_features = np.load('metadata/deeplearning/meta_regressor_features_{}_{}_{}.npy'.format(self.subset_size, self.task, self.fe))
+                    self.meta_features = np.load(os.path.join(self.output_path, 'metadata/meta_regressor_features_{}_{}_{}.npy'.format(self.subset_size, self.task, self.fe)))
 
     def load_meta_labels(self):
         if self.fe == 'STAT':
             if self.task == 'Task11_CHAOSLiver' or self.task == 'Task12_LITSLiver' or self.task == 'Task13_ACDCHeart':
-                print(self.task)
-                # self.meta_labels = np.load('metadata/statistical/meta_regressor_labels_{}.npy'.format(self.task))
+                continue
             else:
-                self.meta_labels = np.load('metadata/statistical/meta_regressor_labels_{}_{}_{}.npy'.format(self.subset_size,self.task, self.fe))
+                self.meta_labels = np.load(os.path.join(self.output_path, metadata/statistical/meta_regressor_labels_{}_{}_{}.npy'.format(self.subset_size,self.task, self.fe)))
         else:
             if self.task == 'Task11_CHAOSLiver' or self.task == 'Task12_LITSLiver' or self.task == 'Task13_ACDCHeart':
-                a=1
+                continue
             else:
-                self.meta_labels = np.load('metadata/deeplearning/meta_regressor_labels_{}_{}_{}.npy'.format(self.subset_size,self.task, self.fe))
+                self.meta_labels = np.load(os.path.join(self.output_path, 'metadata/deeplearning/meta_regressor_labels_{}_{}_{}.npy'.format(self.subset_size,self.task, self.fe)))
 
     def gather_histograms(self, bins = 100):
         for index in tqdm(range(len(self.addresses))):
@@ -134,9 +137,9 @@ class MetaFeatureExtraction():
                 name = self.addresses[index][-9:-7]
             else:
                 name = self.addresses[index][-10:-7]
-            if not os.path.isdir("/home/tjvsonsbeek/featureExtractorUnet/metadata/histograms/{}".format(self.task)):
-                    os.mkdir("/home/tjvsonsbeek/featureExtractorUnet/metadata/histograms/{}".format(self.task))
-            np.save('/home/tjvsonsbeek/featureExtractorUnet/metadata/histograms/{}/{}.npy'.format(self.task, name), hist_array)
+            if not os.path.isdir("metadata/histograms/{}".format(self.task)):
+                    os.mkdir("metadata/histograms/{}".format(self.task))
+            np.save('metadata/histograms/{}/{}.npy'.format(self.task, name), hist_array)
 
     def gather_meta_features_DL(self):
         global_features = np.zeros((self.subset_size,1000))

@@ -20,7 +20,7 @@ def parse_args(args):
       :obj:`argparse.Namespace`: command line parameters namespace
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument("--tasks", default=['Task12_LITSLiver'],help='list of tasks',type=list)
+    parser.add_argument("tasks", help='list of tasks',type=list)
     parser.add_argument("--feature_extractors", required=False, default = ['STAT'], help="feature extractors to use in a list. choose between 'STAT', 'VGG16', 'ResNet50' and  'MobileNetV1'", type=list)
     parser.add_argument("--load_labels", help='choose whether to load metalabels. will throw error if there are no metalabels. Currently only works for medical decathlon methods', default = False, type=bool)
     parser.add_argument("--meta_subset_size", default=20, help='nr of subset in a metafeature',type=int)
@@ -39,7 +39,9 @@ def main(args):
     subset_size = args.meta_subset_size
     nr_of_subsets = args.meta_sample_size
     generate_model_weights = args.generate_model_weights
-
+    output_path = args.output_path
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
     task_path = args.task_path
     if load_labels: participants = args.participants
 
@@ -63,19 +65,19 @@ def main(args):
             else:
                 nr_of_filters = filters[fe]
                 features = np.zeros((nr_of_subsets,subset_size, 7,7,nr_of_filters))
-                model = EncoderDecoderNetwork(fe,task_id)
+                model = EncoderDecoderNetwork(fe,task_id, task_path, output_path)
                 model.task = task
                 model.build_encoder()
                 model.build_decoder()
 
                 if generate_model_weights:
-                    fake_tune(model, task, fe)
+                    model_tune(model, task, fe, task_path, output_path)
                 model.load_weights()
                 model.update_encoder_weights()
 
             for subset in tqdm(range(nr_of_subsets)):
 
-                m = MetaFeatureExtraction(task, subset_size, fe, model, nr_of_filters)
+                m = MetaFeatureExtraction(task, subset_size, fe, model, nr_of_filters, task_path, output_path)
                 if fe != 'STAT': m.load_model(model.feature_extractor)
                 m.gather_random_addresses()
                 m.gather_meta_features()
@@ -90,9 +92,10 @@ def main(args):
                         labels[subset,:,:]   = m.meta_labels
                     except:
                         raise ValueError("No metalabels found at expected location")
+
             if load_labels:
-                np.save('metadata/meta_regressor_labels_{}_{}.npy'.format(task, fe), labels)
-            np.save('metadata/meta_regressor_features_{}_{}.npy'.format(task, fe), features)
+                np.save(os.path.join(output_path, 'meta_regressor_labels_{}_{}.npy'.format(task, fe)), labels)
+            np.save(os.path.join(output_path, 'meta_regressor_features_{}_{}.npy'.format(task, fe)), features)
 
 
 def run():

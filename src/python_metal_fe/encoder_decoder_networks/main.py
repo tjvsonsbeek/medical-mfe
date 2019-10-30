@@ -1,6 +1,6 @@
 from keras.models import Model
 from keras.layers import Input, Conv2D,MaxPooling2D, UpSampling2D, concatenate, Dropout,add, Dense
-from utils import fake_tune_generator, historyPlot, dice_coef_loss, auc, mean_iou, dice_coef
+from python_metal_fe.src.python_metal_fe.utils import model_tune_generator, historyPlot, dice_coef_loss, auc, mean_iou, dice_coef
 import os
 from tqdm import tqdm
 import numpy as np
@@ -18,7 +18,7 @@ class EncoderDecoderNetwork():
             os.makedirs(self.weights_path)
 
     def load_weights(self):
-        self.weights_file = os.path.join(self.weights,"model_{}_{}.h5".format(self.task, self.name))
+        self.weights_file = os.path.join(self.weights_path,"model_{}_{}.h5".format(self.task, self.name))
         self.model.load_weights(self.weights_file)
 
 
@@ -35,7 +35,7 @@ class EncoderDecoderNetwork():
     def add_callback(self, callback):
         self.callbacks.append(callback)
     def train(self, train_data, val_data, imageDimensions, verbosity):
-        self.history = self.model.fit_generator(fake_tune_generator(train_data, self.minibatch_size, imageDimensions), steps_per_epoch = 200, nb_epoch = self.epochs, validation_data = fake_tune_generator(val_data, self.minibatch_size, imageDimensions), validation_steps = 50, verbose = verbosity)
+        self.history = self.model.fit_generator(fake_tune_generator(train_data, self.minibatch_size, imageDimensions), steps_per_epoch = 200, nb_epoch = self.epochs, validation_data =model_tune_generator(val_data, self.minibatch_size, imageDimensions), validation_steps = 50, verbose = verbosity)
     def save_model(self):
         print("---SAVING MODEL---")
         self.model.save_weights(os.path.join(self.weights,"model_{}_{}.h5".format(self.task, self.name)))
