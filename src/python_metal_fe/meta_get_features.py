@@ -1,4 +1,4 @@
-from python_metal_fe.ature_extraction import MetaFeatureExtraction
+from python_metal_fe.feature_extraction import MetaFeatureExtraction
 from python_metal_fe.model_tuning import model_tune
 from python_metal_fe.encoder_decoder_networks import EncoderDecoderNetwork
 
