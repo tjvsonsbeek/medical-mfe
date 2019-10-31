@@ -1,5 +1,5 @@
 from keras.optimizers import Adam
-from utils import dice_coef_loss, auc, mean_iou
+from python_metal_fe.utils import dice_coef_loss, auc, mean_iou
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 import nibabel as nib
 from scipy import misc

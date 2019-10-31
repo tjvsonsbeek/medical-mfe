@@ -1,4 +1,4 @@
-from utils import shannon_entropy, read_nifti, mutual_information, correlation_coefficient, normalize
+from python_metal_fe.utils import shannon_entropy, read_nifti, mutual_information, correlation_coefficient, normalize
 import numpy as np
 from scipy.stats import kurtosis, skew
 from scipy.ndimage import zoom
