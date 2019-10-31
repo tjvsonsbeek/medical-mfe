@@ -10,7 +10,7 @@ from keras.applications.vgg19 import preprocess_input
 
 class MetaFeatureExtraction():
 
-    def __init__(self, task, subset_size, task_path = 'decathlonData',output_path = 'output' fe = '', model = None, nr_of_filters = None):
+    def __init__(self, task, subset_size, task_path = 'decathlonData',output_path = 'output', fe = '', model = None, nr_of_filters = None):
         # self.id = id
         self.task = task
         self.subset_size = subset_size
@@ -106,12 +106,12 @@ class MetaFeatureExtraction():
     def load_meta_labels(self):
         if self.fe == 'STAT':
             if self.task == 'Task11_CHAOSLiver' or self.task == 'Task12_LITSLiver' or self.task == 'Task13_ACDCHeart':
-                continue
+                a=1
             else:
-                self.meta_labels = np.load(os.path.join(self.output_path, metadata/statistical/meta_regressor_labels_{}_{}_{}.npy'.format(self.subset_size,self.task, self.fe)))
+                self.meta_labels = np.load(os.path.join(self.output_path, 'metadata/statistical/meta_regressor_labels_{}_{}_{}.npy'.format(self.subset_size,self.task, self.fe)))
         else:
             if self.task == 'Task11_CHAOSLiver' or self.task == 'Task12_LITSLiver' or self.task == 'Task13_ACDCHeart':
-                continue
+                a=1
             else:
                 self.meta_labels = np.load(os.path.join(self.output_path, 'metadata/deeplearning/meta_regressor_labels_{}_{}_{}.npy'.format(self.subset_size,self.task, self.fe)))
 
