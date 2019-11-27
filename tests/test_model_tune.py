@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from python_metal_fe.skeleton import fib
+import os
+from python_metal_fe.src.python_metal_fe.encoder_decoder_networks import EncoderDecoderNetwork as EncoderDecoder
 
 __author__ = "tjvsonsbeek"
 __copyright__ = "tjvsonsbeek"

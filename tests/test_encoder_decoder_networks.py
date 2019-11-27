@@ -51,9 +51,9 @@ def test_enc_dec_complete():
     enc_dec_resnet.build_classifier( )
     enc_dec_mbnet.build_classifier( )
 
-# def test_enc_dec_paths():
-#     enc_dec_vgg = EncoderDecoder('ENCODER')
-#     assert os.path.exists(self.model_tune_weights_path)
-    # assert os.path.exists(LOCAL_INSTALL_DIR)
-    # assert os.path.exists(LOCAL_INSTALL_DIR)
-    # assert os.path.exists(LOCAL_INSTALL_DIR)
+def test_enc_dec_paths():
+    enc_dec_vgg = EncoderDecoder('ENCODER')
+    assert os.path.exists(self.model_tune_weights_path)
+    assert os.path.exists(LOCAL_INSTALL_DIR)
+    assert os.path.exists(LOCAL_INSTALL_DIR)
+    assert os.path.exists(LOCAL_INSTALL_DIR)
