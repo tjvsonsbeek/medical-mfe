@@ -20,20 +20,23 @@ def parse_args(args):
       :obj:`argparse.Namespace`: command line parameters namespace
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument("tasks", help='list of tasks',type=list)
-    parser.add_argument("--feature_extractors", required=False, default = ['STAT'], help="feature extractors to use in a list. choose between 'STAT', 'VGG16', 'ResNet50' and  'MobileNetV1'", type=list)
+    parser.add_argument("-t",'--tasks', action='store', dest='tasks_list',
+                    type=str, nargs='*', default=[],
+                    help="Examples: -i item1 item2, -i item3")
+    parser.add_argument("--feature_extractors", aciton ='store',dest=feature_extractors, required=False, type=str, nargs='*', default = 'VGG16', 
+    help="feature extractors to use in a list. choose from 'STAT', 'VGG16', 'ResNet50' and  'MobileNetV1'")
     parser.add_argument("--load_labels", help='choose whether to load metalabels. will throw error if there are no metalabels. Currently only works for medical decathlon methods', default = False, type=bool)
-    parser.add_argument("--meta_subset_size", default=20, help='nr of subset in a metafeature',type=int)
+    parser.add_argument("--meta_subset_size", default=20, help='nr of images on which metafeature is based',type=int)
     parser.add_argument("--meta_sample_size", default=1, help='nr of metafeatures ',type=int)
-    parser.add_argument("--generate_model_weights", default=True, help='whether nwew model weights should be generated ',type=bool)
+    parser.add_argument("--generate_model_weights", default=True, help='whether new model weights should be generated ',type=bool)
     parser.add_argument("--participants", required=False, default=['BCVuniandes', 'beomheep', 'CerebriuDIKU', 'EdwardMa12593', 'ildoo', 'iorism82', 'isarasua', 'Isensee', 'jiafucang', 'lesswire1', 'lupin', 'oldrich.kodym', 'ORippler', 'phil666', 'rzchen_xmu', 'ubilearn', 'whale', '17111010008', 'allan.kim01'], help='list of methods for which to extract the metalabels are loaded as well. input not relevant when --load_metalabels: True')
     parser.add_argument("--output_path", default= 'metafeature_extraction_result', type = str)
-    parser.add_argument("--task_path", default= 'decathlonData', type = str)
+    parser.add_argument("--task_path", default= r'C:\Users\s149561\Documents\DecathlonData', type = str)
     return parser.parse_args(args)
 
 def main(args):
     args = parse_args(args)
-    tasks_list = args.tasks
+    tasks_list = args.tasks_list
     feature_extractors = args.feature_extractors
     load_labels = args.load_labels
     subset_size = args.meta_subset_size
@@ -65,13 +68,13 @@ def main(args):
             else:
                 nr_of_filters = filters[fe]
                 features = np.zeros((nr_of_subsets,subset_size, 7,7,nr_of_filters))
-                model = EncoderDecoderNetwork(fe,task_id, task_path, output_path)
+                model = EncoderDecoderNetwork(fe,task_id, output_path)
                 model.task = task
                 model.build_encoder()
                 model.build_decoder()
 
-                if generate_model_weights:
-                    model_tune(model, task, fe, task_path, output_path)
+#                if generate_model_weights:
+#                    model_tune(model, task, fe, task_path, output_path)
                 model.load_weights()
                 model.update_encoder_weights()
 

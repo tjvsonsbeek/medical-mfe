@@ -10,15 +10,15 @@ from keras.applications.vgg19 import preprocess_input
 
 class MetaFeatureExtraction():
 
-    def __init__(self, task, subset_size, task_path = 'decathlonData',output_path = 'output', fe = '', model = None, nr_of_filters = None):
+    def __init__(self, task, subset_size, fe = '', model = None, nr_of_filters = None, task_path = 'decathlonData', output_path = 'output'):
         # self.id = id
         self.task = task
         self.subset_size = subset_size
         self.fe = fe
         self.dataset_path = task_path
         self.output_path = output_path
-        if not os.path.exists(os.join(self.output_path,' metadata')):
-            os.makedirs(os.join(self.output_path, 'metadata'))
+        if not os.path.exists(os.path.join(self.output_path,'metadata')):
+            os.makedirs(os.path.join(self.output_path, 'metadata'))
         if model:
             self.load_model(model.feature_extractor)
         if nr_of_filters:

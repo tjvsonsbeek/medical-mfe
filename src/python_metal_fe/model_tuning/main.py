@@ -8,9 +8,9 @@ import os
 from tqdm import tqdm
 import numpy as np
 
-def makejpg(task, result_folder, size, task_path, output_path, image_dimensions = (224, 224),task_path):
+def makejpg(task, result_folder, size, task_path, output_path, image_dimensions = (224, 224)):
     count = 0
-    addresses = os.listdir(os.path.join(task_path,task,'imagesTs'))
+    addresses = os.listdir(os.path.join(task_path,task,'imagesTs'))[:20]
     images_per_address = np.ceil(size/len(addresses)).astype(np.uint8)
     for address in tqdm(addresses):
         img =  (nib.load(os.path.join(task_path,task,'imagesTs', address))).get_data()
@@ -30,9 +30,9 @@ def load_data(task, train_or_valid, path):
             addresses_list.append(os.path.join(path, '{}_{}/images/{}'.format(train_or_valid, task, address)))
     return addresses_list
 
-def model_tune(enc_dec_model, task, feature_extractor, task_path,  out_path, train_size = 1000, val_size = 400, epochs = 4, minibatch_size = 5, image_dimensions = (224,224)):
+def model_tune(enc_dec_model, task, feature_extractor, task_path,  out_path, train_size = 10, val_size = 4, epochs = 4, minibatch_size = 5, image_dimensions = (224,224)):
     ## create folder for train and validation images
-    output_path = os.join(out_path, 'model_tune_data')
+    output_path = os.path.join(out_path, 'model_tune_data')
     if not os.path.exists(output_path):
         os.makedirs(output_path)
 
@@ -49,8 +49,8 @@ def model_tune(enc_dec_model, task, feature_extractor, task_path,  out_path, tra
         elif i=='valid':
             makejpg(task, i, val_size, task_path, output_path)
     ## load the data addresses
-    train_data = load_data(task, 'train')
-    valid_data = load_data(task, 'valid')
+    train_data = load_data(task, 'train', output_path)
+    valid_data = load_data(task, 'valid', output_path)
 
     ## load encoderdecoder network and set parameters
     enc_dec_model.epochs = epochs

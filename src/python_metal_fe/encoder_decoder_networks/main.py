@@ -9,11 +9,11 @@ import random
 import copy
 
 class EncoderDecoderNetwork():
-    def __init__(self, name, id = 0, weights_path = '/tuned_models'):
+    def __init__(self, name, id = 0, output_path = ''):
         self.name = name
         self.id = id
         self.callbacks = []
-        self.weights_path = weights_path
+        self.weights_path = os.path.join(output_path, 'tuned_models')
         if not os.path.exists(self.weights_path):
             os.makedirs(self.weights_path)
 
@@ -35,7 +35,7 @@ class EncoderDecoderNetwork():
     def add_callback(self, callback):
         self.callbacks.append(callback)
     def train(self, train_data, val_data, imageDimensions, verbosity):
-        self.history = self.model.fit_generator(fake_tune_generator(train_data, self.minibatch_size, imageDimensions), steps_per_epoch = 200, nb_epoch = self.epochs, validation_data =model_tune_generator(val_data, self.minibatch_size, imageDimensions), validation_steps = 50, verbose = verbosity)
+        self.history = self.model.fit_generator(model_tune_generator(train_data, self.minibatch_size, imageDimensions), steps_per_epoch = 2, nb_epoch = self.epochs, validation_data =model_tune_generator(val_data, self.minibatch_size, imageDimensions), validation_steps = 50, verbose = verbosity)
     def save_model(self):
         print("---SAVING MODEL---")
         self.model.save_weights(os.path.join(self.weights,"model_{}_{}.h5".format(self.task, self.name)))
