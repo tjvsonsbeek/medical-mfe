@@ -1,6 +1,6 @@
 from keras.models import Model
 from keras.layers import Input, Conv2D,MaxPooling2D, UpSampling2D, concatenate, Dropout,add, Dense
-from python_metal_fe.utils import model_tune_generator, historyPlot, dice_coef_loss, auc, mean_iou, dice_coef
+from medical_metafeatures.utils import model_tune_generator, historyPlot, dice_coef_loss, auc, mean_iou, dice_coef
 import os
 from tqdm import tqdm
 import numpy as np
@@ -38,7 +38,7 @@ class EncoderDecoderNetwork():
         self.history = self.model.fit_generator(model_tune_generator(train_data, self.minibatch_size, imageDimensions), steps_per_epoch = 2, nb_epoch = self.epochs, validation_data =model_tune_generator(val_data, self.minibatch_size, imageDimensions), validation_steps = 50, verbose = verbosity)
     def save_model(self):
         print("---SAVING MODEL---")
-        self.model.save_weights(os.path.join(self.weights,"model_{}_{}.h5".format(self.task, self.name)))
+        self.model.save_weights(os.path.join(self.weights_path,"model_{}_{}.h5".format(self.task, self.name)))
     def build_encoder(self):
         if self.name == 'VGG16':
             from keras.applications.vgg16 import VGG16

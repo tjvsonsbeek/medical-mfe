@@ -1,5 +1,5 @@
 from keras.optimizers import Adam
-from python_metal_fe.utils import dice_coef_loss, auc, mean_iou
+from medical_metafeatures.utils import dice_coef_loss, auc, mean_iou
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 import nibabel as nib
 from scipy import misc
@@ -30,7 +30,7 @@ def load_data(task, train_or_valid, path):
             addresses_list.append(os.path.join(path, '{}_{}/images/{}'.format(train_or_valid, task, address)))
     return addresses_list
 
-def model_tune(enc_dec_model, task, feature_extractor, task_path,  out_path, train_size = 10, val_size = 4, epochs = 4, minibatch_size = 5, image_dimensions = (224,224)):
+def model_tune(enc_dec_model, task, feature_extractor, task_path,  out_path, train_size = 5, val_size = 1, epochs = 2, minibatch_size = 3, image_dimensions = (224,224)):
     ## create folder for train and validation images
     output_path = os.path.join(out_path, 'model_tune_data')
     if not os.path.exists(output_path):

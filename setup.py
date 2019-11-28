@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    Setup file for python_metal_fe.
+    Setup file for medical_metafeatures.
     Use setup.cfg to configure your project.
 
     This file was generated with PyScaffold 3.2.2.

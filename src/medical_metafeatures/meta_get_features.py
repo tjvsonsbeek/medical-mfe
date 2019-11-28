@@ -1,6 +1,6 @@
-from python_metal_fe.feature_extraction import MetaFeatureExtraction
-from python_metal_fe.model_tuning import model_tune
-from python_metal_fe.encoder_decoder_networks import EncoderDecoderNetwork
+from medical_metafeatures.feature_extraction import MetaFeatureExtraction
+from medical_metafeatures.model_tuning import model_tune
+from medical_metafeatures.encoder_decoder_networks import EncoderDecoderNetwork
 
 from tqdm import tqdm
 import numpy as np
@@ -21,9 +21,9 @@ def parse_args(args):
     """
     parser = argparse.ArgumentParser()
     parser.add_argument("-t",'--tasks', action='store', dest='tasks_list',
-                    type=str, nargs='*', default=[],
+                    type=str, nargs='*', default=['Task04_Hippocampus'],
                     help="Examples: -i item1 item2, -i item3")
-    parser.add_argument("--feature_extractors", aciton ='store',dest=feature_extractors, required=False, type=str, nargs='*', default = 'VGG16', 
+    parser.add_argument("--feature_extractors", action ='store',dest='feature_extractors', required=False, type=str, nargs='*', default = ['STAT','VGG16'], 
     help="feature extractors to use in a list. choose from 'STAT', 'VGG16', 'ResNet50' and  'MobileNetV1'")
     parser.add_argument("--load_labels", help='choose whether to load metalabels. will throw error if there are no metalabels. Currently only works for medical decathlon methods', default = False, type=bool)
     parser.add_argument("--meta_subset_size", default=20, help='nr of images on which metafeature is based',type=int)
@@ -31,7 +31,7 @@ def parse_args(args):
     parser.add_argument("--generate_model_weights", default=True, help='whether new model weights should be generated ',type=bool)
     parser.add_argument("--participants", required=False, default=['BCVuniandes', 'beomheep', 'CerebriuDIKU', 'EdwardMa12593', 'ildoo', 'iorism82', 'isarasua', 'Isensee', 'jiafucang', 'lesswire1', 'lupin', 'oldrich.kodym', 'ORippler', 'phil666', 'rzchen_xmu', 'ubilearn', 'whale', '17111010008', 'allan.kim01'], help='list of methods for which to extract the metalabels are loaded as well. input not relevant when --load_metalabels: True')
     parser.add_argument("--output_path", default= 'metafeature_extraction_result', type = str)
-    parser.add_argument("--task_path", default= r'C:\Users\s149561\Documents\DecathlonData', type = str)
+    parser.add_argument("--task_path", default= r'C:\Users\s149561\Documents\Afstuderen\DecathlonData', type = str)
     return parser.parse_args(args)
 
 def main(args):
@@ -73,8 +73,8 @@ def main(args):
                 model.build_encoder()
                 model.build_decoder()
 
-#                if generate_model_weights:
-#                    model_tune(model, task, fe, task_path, output_path)
+                if generate_model_weights:
+                    model_tune(model, task, fe, task_path, output_path)
                 model.load_weights()
                 model.update_encoder_weights()
 
