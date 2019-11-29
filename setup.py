@@ -20,4 +20,6 @@ except VersionConflict:
 
 
 if __name__ == "__main__":
-    setup(use_pyscaffold=True)
+    setup(use_pyscaffold=True,
+	long_description=open('README.md').read(),
+    	long_description_content_type='text/markdown')

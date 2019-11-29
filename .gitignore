@@ -21,7 +21,6 @@ __pycache__/*
 .settings
 .idea
 tags
-.png
 .h5
 .npy
 
