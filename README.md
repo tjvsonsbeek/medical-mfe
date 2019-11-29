@@ -1,9 +1,7 @@
-medical_metafeatures
+Medical_metafeatures
 ===============
 
-Toolkit for extraction of metafeatures from medical datasets. Four different methods for metafeature extraction can be used. (statistical, VGG16, ResNet50 and MobileNetV1)
-
-The code is tested against Python 3.6 and 3.7.
+Toolkit for extraction of metafeatures from medical datasets. Four different methods for metafeature extraction can be used. 
 ## Description
 
 Toolkit for extraction of metafeatures from medical datasets. 4 different methods for metafeature extraction can be used. (statistical, VGG16, ResNet50 and MobileNetV1).
@@ -21,16 +19,40 @@ If you are using pip:
 If you are using conda, you can install from the `conda-forge` channel:
 
     conda install -c conda-forge medical_metafeatures
+## Dependencies
 
+The main `medical_metafeatures` requirement is:
+* Python (>= 3.6)
+
+## Installation
+
+The installation process is similar to other packages available on pip:
+
+```python
+pip install -U pymfe
+```
+
+It is possible to install the development version using:
+
+```python
+pip install -U git+https://github.com/ealcobaca/pymfe
+```
+
+or
+
+```
+git clone https://github.com/ealcobaca/pymfe.git
+cd pymfe
+python3 setup.py install
+```
 ## Command-line usage
 
 Use get_meta_features for the extraction of metafeatures. 
 
 Example: 
 
-    >> import medical_metafeatures
-    >> medical_metafeatures.get_metafeatures --task 'Example_dataset' --feature_extractors 'STAT' 'VGG16', --meta_suset_size 15 --generate_weights False --output_path 'dest' --task_path 'datasets' 
-    
+    python -m medical_metafeatures.get_metafeatures --task 'Example_dataset' --feature_extractors 'STAT' 'VGG16', --meta_suset_size 15 --generate_weights False --output_path 'dest' --task_path 'datasets' 
+   
 ___
 Parameters for meta_get_features:
 ___
@@ -76,7 +98,9 @@ Statistical
 ___
 Deep learning based metafeatures
 ==
-![](examples/finetuning.png)
+![](media/finetuning.png)
+![](media/metalearningsystem.png)
+
 
 
 Note
