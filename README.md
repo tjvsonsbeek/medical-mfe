@@ -46,6 +46,14 @@ git clone https://github.com/tjvsonsbeek/medical-mfe.git
 cd medical_metafeatures
 python setup.py sdist
 ```
+
+or
+
+Download the package through this link:
+
+https://drive.google.com/file/d/1gR1mRe-wpD_0Ap-F8szHgNqYe7SOk7YS/view?usp=sharing
+
+
 ## Command-line usage
 
 Use get_meta_features for the extraction of metafeatures. 
