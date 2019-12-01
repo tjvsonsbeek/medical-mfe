@@ -21,42 +21,30 @@ Toolkit for extraction of metafeatures from medical datasets. Metafeatures are a
 Images should have .nii.gz extension.
 (if your images have .nii format, gzip: https://www.gzip.org/ can be used for fast conversion)
 
-## Installation
-
-If you are using pip:
-
-    pip install medical_metafeatures
-
-If you are using conda, you can install from the `conda-forge` channel:
-
-    conda install -c conda-forge medical_metafeatures
 ## Dependencies
 
 The main `medical_metafeatures` requirement is:
 * Python (>= 3.6)
 
+Specific requirement to be found in 'requirements.txt'
+Package is tested on Python 3.6 and Python 3.7
 
 
 ## Installation
 
-The installation process is similar to other packages available on pip:
+Installation through pip is not yet enabled. 
 
-```python
-pip install -U medical_metafeatures
-```
-
-It is possible to install the development version using:
+It is possible to install the current version using:
 
 ```python
 pip install -U git+https://github.com/tjvsonsbeek/medical-mfe
 ```
-
 or
 
 ```
-git clone https://github.com/ealcobaca/pymfe.git
-cd pymfe
-python3 setup.py install
+git clone https://github.com/tjvsonsbeek/medical-mfe.git
+cd medical_metafeatures
+python setup.py sdist
 ```
 ## Command-line usage
 
