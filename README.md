@@ -71,67 +71,74 @@ ___
 ___
 -t, --task\
 
-Name of dataset or datasets on which metafeatures will be extracted as string. Multiple inputs are possible.\
+Name of dataset or datasets on which metafeatures will be extracted as string. Multiple inputs are possible.
 
 ___
---feature_extractors\
+--feature_extractors
 
-Feature extractors to use for metafeature extraction. Expected as string.  choose from 'STAT', 'VGG16', 'ResNet50' and  'MobileNetV1'. Multiple inputs are possible. \
+Feature extractors to use for metafeature extraction. Expected as string.  choose from 'STAT', 'VGG16', 'ResNet50' and  'MobileNetV1'. Multiple inputs are possible. 
 
 Default = ['STAT', 'VGG16']
 ___
---load_labels\
+--load_labels
 
-Choose whether to load metalabels. will throw error if there are no metalabels. Currently only works for medical decathlon datasets. Metalabels are not public yet.\
+Choose whether to load metalabels. will throw error if there are no metalabels. Currently only works for medical decathlon datasets. Metalabels are not public yet.
 
 Default = False
 ___
---meta_subset_size\
+--meta_subset_size
 
-Number of images on which metafeature is based.\
+Number of images on which metafeature is based.
 
 Default = 20
 ____
 --meta_sample_size\
 
-Number of metafeatures per dataset. \
+Number of metafeatures per dataset. 
 
 Default = 10
 ___
---generate_model_weights\
+--generate_model_weights
 
-Boolean which tells whether new model weights should be generated. Only used when deep learning based metafeature extraction is done. \
+Boolean which tells whether new model weights should be generated. Only used when deep learning based metafeature extraction is done. 
+
 Default = True
 ___
---output_path\
+--output_path
 
-Path where all output will be saved\
+Path where all output will be saved
 
 Default = 'metafeature_extraction_result'
 ___
---task_path\
+--task_path.
 
-Path in which to find the dataset folder. In this folder there should be a folder with the name of -t/--task. This folder should contain a ImagesTs folder with the images to extract the metafeature from in it. Images should have the .nii.gz extension\
+Path in which to find the dataset folder. In this folder there should be a folder with the name of -t/--task. This folder should contain a ImagesTs folder with the images to extract the metafeature from in it. Images should have the .nii.gz extension.
 
 Default = 'DecathlonData'
 ___
---finetune_ntrain\
+--finetune_ntrain
 
-Number of training images in finetuning. Only applicable when generate_model_weights == True\
+Number of training images in finetuning. Only applicable when generate_model_weights == True
 
-Default = 800 \
+Default = 800
 ___
 --finetune_nval
-Number of validation images in finetuning. Only applicable when generate_model_weights == True\
-Default = 200 \
+
+Number of validation images in finetuning. Only applicable when generate_model_weights == True
+
+Default = 200
 ___
 --finetune_nepochs
-Number of epochs in finetuning. Only applicable when generate_model_weights == True\
-Default = 5\
+
+Number of epochs in finetuning. Only applicable when generate_model_weights == True
+
+Default = 5
 ___
 --finetune_batch
-Batch size in finetuning. Only applicable when generate_model_weights == True\
-Default = 5\
+
+Batch size in finetuning. Only applicable when generate_model_weights == True
+
+Default = 5
 
 Note
 ====
