@@ -6,7 +6,7 @@ Toolkit for extraction of metafeatures from medical datasets. Four different met
 ## Description
 
 Toolkit for extraction of metafeatures from medical datasets. Metafeatures are a compressed representation of a dataset which can be used in meta-learning to predict model performance for example. 4 different methods for metafeature extraction can be used. 
-![](media/metalearningsystem.png&s=200)
+![](media/metalearningsystem.png)
 *Example of usage of metafeatures*
 
 
@@ -14,7 +14,7 @@ Toolkit for extraction of metafeatures from medical datasets. Metafeatures are a
 * Statistical: standard numerical features of images in datasets (mean voxel value, kurtosis, skewness etc.), and features describing the relations between images in datasets (mutual information, correlation etc.). 
 * VGG16/Resnet50/MobileNetV1: Deep learning based feature extraction from datasets. Network is finetuned without the need of labels and outputs a feature representation of a dataset which can be used as a metafeature.  
 
-![](media/finetuning.png&s=200)
+![](media/finetuning.png)
 *Metafeature extraction using deep learning based methods*
 
 
@@ -67,57 +67,71 @@ Example:
     python -m medical_metafeatures.get_meta_features --task 'Example_dataset' --feature_extractors 'STAT' 'VGG16', --meta_suset_size 15 --generate_weights False --output_path 'dest' --task_path 'datasets' 
    
 ___
-Parameters for get_meta_features:
+## Parameters for get_meta_features:
 ___
--t, --task
+-t, --task\
 
-Name of dataset or datasets on which metafeatures will be extracted as string. Multiple inputs are possible
-___
---feature_extractors
-Feature extractors to use for metafeature extraction. Expected as string.  choose from 'STAT', 'VGG16', 'ResNet50' and  'MobileNetV1'. Multiple inputs are possible. 
-___
---load_labels
-___
-Choose whether to load metalabels. will throw error if there are no metalabels. Currently only works for medical decathlon datasets. Metalabels are not public yet.
-default = False
+Name of dataset or datasets on which metafeatures will be extracted as string. Multiple inputs are possible.\
 
---output_path
+___
+--feature_extractors\
+
+Feature extractors to use for metafeature extraction. Expected as string.  choose from 'STAT', 'VGG16', 'ResNet50' and  'MobileNetV1'. Multiple inputs are possible. \
+
+Default = ['STAT', 'VGG16']
+___
+--load_labels\
+
+Choose whether to load metalabels. will throw error if there are no metalabels. Currently only works for medical decathlon datasets. Metalabels are not public yet.\
+
+Default = False
+___
+--meta_subset_size\
+
+Number of images on which metafeature is based.\
+
+Default = 20
 ____
---meta_subset_size
-Number of images on which metafeature is based
-default = 20
-____
---meta_sample_size
-Number of metafeatures per dataset
+--meta_sample_size\
+
+Number of metafeatures per dataset. \
+
 Default = 10
 ___
---generate_model_weights
-Boolean which tells whether new model weights should be generated. Only used when deep learning based metafeature extraction is done. 
-default = True
+--generate_model_weights\
+
+Boolean which tells whether new model weights should be generated. Only used when deep learning based metafeature extraction is done. \
+Default = True
 ___
---output_path
-Path where all output will be saved
+--output_path\
+
+Path where all output will be saved\
+
 Default = 'metafeature_extraction_result'
 ___
---task_path
-Path in which to find the dataset folder. In this folder there should be a folder with the name of -t/--task. This folder should contain a ImagesTs folder with the images to extract the metafeature from in it. Images should have the .nii.gz extenstion
+--task_path\
+
+Path in which to find the dataset folder. In this folder there should be a folder with the name of -t/--task. This folder should contain a ImagesTs folder with the images to extract the metafeature from in it. Images should have the .nii.gz extension\
+
 Default = 'DecathlonData'
 ___
---finetune_ntrain
-Number of training images in finetuning. Only applicable when generate_model_weights == True
-Default = 800 
+--finetune_ntrain\
+
+Number of training images in finetuning. Only applicable when generate_model_weights == True\
+
+Default = 800 \
 ___
 --finetune_nval
-Number of validation images in finetuning. Only applicable when generate_model_weights == True
-Default = 200 
+Number of validation images in finetuning. Only applicable when generate_model_weights == True\
+Default = 200 \
 ___
 --finetune_nepochs
-Number of epochs in finetuning. Only applicable when generate_model_weights == True
-Default = 5
+Number of epochs in finetuning. Only applicable when generate_model_weights == True\
+Default = 5\
 ___
 --finetune_batch
-Batch size in finetuning. Only applicable when generate_model_weights == True
-Default = 5
+Batch size in finetuning. Only applicable when generate_model_weights == True\
+Default = 5\
 
 Note
 ====
