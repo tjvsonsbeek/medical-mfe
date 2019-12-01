@@ -31,7 +31,12 @@ def parse_args(args):
     parser.add_argument("--generate_model_weights", default=True, help='whether new model weights should be generated ',type=bool)
     parser.add_argument("--participants", required=False, default=['BCVuniandes', 'beomheep', 'CerebriuDIKU', 'EdwardMa12593', 'ildoo', 'iorism82', 'isarasua', 'Isensee', 'jiafucang', 'lesswire1', 'lupin', 'oldrich.kodym', 'ORippler', 'phil666', 'rzchen_xmu', 'ubilearn', 'whale', '17111010008', 'allan.kim01'], help='list of methods for which to extract the metalabels are loaded as well. input not relevant when --load_metalabels: True')
     parser.add_argument("--output_path", default= 'metafeature_extraction_result', type = str)
-    parser.add_argument("--task_path", default= r'C:\Users\s149561\Documents\Afstuderen\DecathlonData', type = str)
+    parser.add_argument("--task_path", default= 'DecathlonData', type = str)
+
+    parser.add_argument("--finetune_ntrain", default=800, help='number of training images in finetuning. Only applicable when generate_model_weights == True, default = 800 ',type=int)
+    parser.add_argument("--finetune_nval", default=200, help='number of validation images in finetuning. Only applicable when generate_model_weights == True, default = 200',type=int)
+    parser.add_argument("--finetune_nepoch", default=5, help='number of epochs in finetuning. Only applicable when generate_model_weights == True. default = 5 ',type=int)
+    parser.add_argument("--finetune_batch", default=5, help='batch_size in finetuning. Only applicable when generate_model_weights == True. default = 5 ',type=int)
     return parser.parse_args(args)
 
 def main(args):
@@ -43,6 +48,12 @@ def main(args):
     nr_of_subsets = args.meta_sample_size
     generate_model_weights = args.generate_model_weights
     output_path = args.output_path
+    finetune_train_size = args.finetune_ntrain
+    finetune_val_size = args.finetune_nval
+    finetune_epochs = args.finetune_nepoch
+    finetune_batchsize = args.finetune_batch
+    
+    
     if not os.path.exists(output_path):
         os.makedirs(output_path)
     task_path = args.task_path
@@ -50,7 +61,7 @@ def main(args):
 
     filters = {'VGG16': 512, 'MobileNetV1': 1024, 'ResNet50': 2048}
 
-    custom_subset_size = {5: {'Task01_BrainTumour': 5,'Task02_Heart': 5,'Task03_Liver': 5,'Task04_Hippocampus': 5, 'Task05_Prostate': 5, 'Task06_Lung': 5, 'Task07_Pancreas': 5, 'Task08_HepaticVessel': 5, 'Task09_Spleen': 5, 'Task10_Colon': 5}, 10: {'Task01_BrainTumour': 10,'Task02_Heart': 6,'Task03_Liver': 10,'Task04_Hippocampus': 10, 'Task05_Prostate': 10, 'Task06_Lung': 10, 'Task07_Pancreas': 10, 'Task08_HepaticVessel': 10, 'Task09_Spleen': 10, 'Task10_Colon': 10}, 20: {'Task01_BrainTumour': 20,'Task02_Heart': 7,'Task03_Liver': 20,'Task04_Hippocampus': 20, 'Task05_Prostate': 11, 'Task06_Lung': 20, 'Task07_Pancreas': 20, 'Task08_HepaticVessel': 20, 'Task09_Spleen': 16, 'Task10_Colon': 20}}
+    custom_subset_size = {20: {'Task01_BrainTumour': 20,'Task02_Heart': 10,'Task03_Liver': 20,'Task04_Hippocampus': 20, 'Task05_Prostate': 16, 'Task06_Lung': 20, 'Task07_Pancreas': 20, 'Task08_HepaticVessel': 20, 'Task09_Spleen': 20, 'Task10_Colon': 20}}
 
     for task_id, task in enumerate(tasks_list):
         for fe in feature_extractors:
@@ -74,7 +85,7 @@ def main(args):
                 model.build_decoder()
 
                 if generate_model_weights:
-                    model_tune(model, task, fe, task_path, output_path)
+                    model_tune(model, task, fe, task_path, output_path, finetune_train_size, finetune_val_size, finetune_epochs, finetune_batchsize)
                 model.load_weights()
                 model.update_encoder_weights()
 
