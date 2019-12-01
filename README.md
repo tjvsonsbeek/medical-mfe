@@ -52,10 +52,10 @@ Use get_meta_features for the extraction of metafeatures.
 
 Example: 
 
-    python -m medical_metafeatures.get_meta_features --task 'Example_dataset' --feature_extractors 'STAT' 'VGG16', --meta_suset_size 15 --generate_weights False --output_path 'dest' --task_path 'datasets' 
+    python -m medical_metafeatures.meta_get_features --task 'Example_dataset' --feature_extractors 'STAT' 'VGG16', --meta_suset_size 15 --generate_weights False --output_path 'dest' --task_path 'datasets' 
    
 ___
-## Parameters for get_meta_features:
+## Parameters for meta_get_features:
 ___
 -t, --task\
 
