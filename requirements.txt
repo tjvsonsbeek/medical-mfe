@@ -77,7 +77,7 @@ setuptools == 41.4.0
 
 # build\lib\python_metal_fe\utils\main.py: 1
 # src\python_metal_fe\utils\main.py: 1
-tensorflow == 1.14.0
+tensorflow == 1.15.0
 
 # build\lib\python_metal_fe\encoder_decoder_networks\main.py: 5
 # build\lib\python_metal_fe\feature_extraction\main.py: 5
