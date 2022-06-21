@@ -34,7 +34,7 @@ nibabel == 2.5.1
 # src\python_metal_fe\meta_get_features.py: 6
 # src\python_metal_fe\model_tuning\main.py: 9
 # src\python_metal_fe\utils\main.py: 4
-numpy == 1.16.5
+numpy == 1.22.0
 
 # build\lib\python_metal_fe\encoder_decoder_networks\main.py: 7
 # build\lib\python_metal_fe\feature_extraction\main.py: 6
